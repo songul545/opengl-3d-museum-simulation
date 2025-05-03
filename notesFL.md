@@ -9,3 +9,6 @@
 - glfwWindowHint: Sets window hints for the GLFW window. These hints control various aspects of the window's creation, such as its size, context version, and whether it should be resizable.  
 ``` cpp
 hhhjjdkcdjncvjbvh
+  
+  ``
+  modfying
