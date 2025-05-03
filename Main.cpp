@@ -8,7 +8,7 @@ int main()
 	glfwInit();
 
 
-
+	//jkjkjhjjjlkkjkhkddkjjjýoýj
 	// Tell GLFW what version of OpenGL we are using 
 	// In this case we are using OpenGL 3.3
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
