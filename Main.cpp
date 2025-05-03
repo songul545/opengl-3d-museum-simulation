@@ -6,7 +6,7 @@ int main()
 {
 	// Initialize GLFW
 	glfwInit();
-    ///yeschanged
+    ///changed
 
 	//jkjkjhjjjlkkjkhkddkjjjýoýj
 	// Tell GLFW what version of OpenGL we are using 

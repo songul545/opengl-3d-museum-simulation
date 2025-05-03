@@ -7,8 +7,6 @@
 - glfwInit: Initializes the GLFW library. This function must be called before any other GLFW functions.
 - glfwTerminate: Cleans up and closes the GLFW library. This function should be called when you are done using GLFW.
 - glfwWindowHint: Sets window hints for the GLFW window. These hints control various aspects of the window's creation, such as its size, context version, and whether it should be resizable.  
-``` cpp
-hhhjjdkcdjncvjbvh
-  
-  ``
-  modfying jdjedhhd
+
+
+### h3
