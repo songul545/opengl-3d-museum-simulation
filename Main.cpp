@@ -5,16 +5,18 @@
 #include"VBO.h"
 #include"VAO.h"
 #include"EBO.h"
+#include<stb/stb_image.h>
 
 // Vertices coordinates;
 GLfloat vertices[] =
 {
-	-0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f, // Lower left corner
-	0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f, // Lower right corner
-	0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f, // Upper 
-	-0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f, // left middle
-	0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f, // right middle
-	0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f // bottom middle
+	// Positions                                // Colors
+	-0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,   0.41f, 0.8f, 0.5f, // Lower left corner
+	0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,   0.7f, 0.03f, 0.12f,  // Lower right corner
+	0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f,   0.41f, 0.96f, 0.5f, // Upper 
+	-0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,   0.91f, 0.35f, 0.65f, // left middle
+	0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,    0.51f, 0.82f, 0.5f, // right middle
+	0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f,    0.41f, 0.87f, 0.12f, // bottom middle
 
 };
 
@@ -75,13 +77,20 @@ int main()
 	VBO VBO1(vertices, sizeof(vertices)); // Generate vbo object and load vertices data into it
 	EBO EBO1(indices, sizeof(indices)); // Generate EBO object and load indices data into it
 
-	// Link the VBO to the VAO
-	VAO1.LinkVBO(VBO1, 0);
+	// tell OpenGL how to interpret the vertex data and link the VBO to the VAO
+	// for the first attribute (position)
+	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 6 * sizeof(GLfloat), (void*)0);
+	// for the second attribute (color)
+	VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 6 * sizeof(GLfloat), (void*)(3 *sizeof(GLfloat)));
+
 
 	//unbind them all not to accidentally modify them
 	VAO1.Unbind();
 	VBO1.Unbind();
 	EBO1.Unbind();
+
+	// Get the uniform location ýd of the scale variable in the shader
+	GLuint uniID = glGetUniformLocation(shaderProgram.ID, "scale");
 
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
@@ -92,6 +101,8 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT);
 		// tell opengl which shader program we want to use
 		shaderProgram.Activate();
+		// assinging a value to unýform and always before activating the shaderprogram
+		glUniform1f(uniID, 0.6f);
 		// Bind the VAO so that opengl knows which vertex array object to use
 		VAO1.Bind();
 		// Draw the triangle using the indices
