@@ -2,28 +2,26 @@
 #include<glad/glad.h>
 #include<GLFW/glfw3.h>
 #include"shaderClass.h"
+#include"Texture.h"
 #include"VBO.h"
 #include"VAO.h"
 #include"EBO.h"
 #include<stb/stb_image.h>
 
+
 // Vertices coordinates;
 GLfloat vertices[] =
 {
-	// Positions                                // Colors
-	-0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,   0.41f, 0.8f, 0.5f, // Lower left corner
-	0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,   0.7f, 0.03f, 0.12f,  // Lower right corner
-	0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f,   0.41f, 0.96f, 0.5f, // Upper 
-	-0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,   0.91f, 0.35f, 0.65f, // left middle
-	0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,    0.51f, 0.82f, 0.5f, // right middle
-	0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f,    0.41f, 0.87f, 0.12f, // bottom middle
-
+	// Positions            // Colors         // Texture Coords
+	-0.5f, -0.5f, 0.0f,   0.41f, 0.8f, 0.9f,   0.0f, 0.0f,// lower left 
+	-0.5f, 0.5f, 0.0f,   0.7f, 0.03f, 0.12f,    0.0f, 1.0f,//  upper left
+	0.5f, 0.5f, 0.0f,   0.11f, 0.96f, 0.5f,      1.0f, 1.0f,// Upper right
+	0.5f, -0.5f, 0.0f,   0.91f, 0.35f, 0.65f,   1.0f, 0.0f// lower right
 };
 
 GLuint indices[] = {
-	3, 2, 4 , //top triangle
-	5, 4, 1 , //right triangle
-	0, 3, 5 , //left triangle
+	0, 1, 3, // First Triangle
+	1, 2, 3  // Second Triangle
 };
 
 int main()
@@ -79,9 +77,10 @@ int main()
 
 	// tell OpenGL how to interpret the vertex data and link the VBO to the VAO
 	// for the first attribute (position)
-	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 6 * sizeof(GLfloat), (void*)0);
+	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 8* sizeof(GLfloat), (void*)0);
 	// for the second attribute (color)
-	VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 6 * sizeof(GLfloat), (void*)(3 *sizeof(GLfloat)));
+	VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 8 * sizeof(GLfloat), (void*)(3 *sizeof(GLfloat)));
+	VAO1.LinkAttrib(VBO1, 2, 2, GL_FLOAT, 8 * sizeof(GLfloat), (void*)(6 *sizeof(GLfloat)));
 
 
 	//unbind them all not to accidentally modify them
@@ -91,6 +90,12 @@ int main()
 
 	// Get the uniform location ýd of the scale variable in the shader
 	GLuint uniID = glGetUniformLocation(shaderProgram.ID, "scale");
+
+	// Load the texture from the file and create a texture object
+	Texture trflag("trflag.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
+	trflag.texUnit(shaderProgram, "tex0", 0); // Assign the texture unit to the shader uniform
+
+
 
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
@@ -104,9 +109,10 @@ int main()
 		// assinging a value to unýform and always before activating the shaderprogram
 		glUniform1f(uniID, 0.6f);
 		// Bind the VAO so that opengl knows which vertex array object to use
+		trflag.Bind(); // Bind the texture so ýt appears ýn render 
 		VAO1.Bind();
 		// Draw the triangle using the indices
-		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		// Swap the back buffer with the front buffer
 		glfwSwapBuffers(window);
 		// Take care of all GLFW events
@@ -117,6 +123,7 @@ int main()
 	VAO1.Delete();
 	VBO1.Delete();
 	EBO1.Delete();
+	trflag.Delete();
 	shaderProgram.Delete();
 
 	// Delete window before ending the program

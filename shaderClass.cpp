@@ -33,6 +33,7 @@ Shader::Shader(const char* vertexFile, const char* fragmentFile)
 	glShaderSource(vertexShader, 1, &vertexSource, NULL);
 	// Compile the vertex shader into machine code
 	glCompileShader(vertexShader);
+	compileErrors(vertexShader, "VERTEX"); // Checking errors in GLSL vertex shader
 
 	// Create a fragment shader object and get its ID
 	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -40,6 +41,7 @@ Shader::Shader(const char* vertexFile, const char* fragmentFile)
 	glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
 	// compile the fragment shader into machine code
 	glCompileShader(fragmentShader);
+	compileErrors(fragmentShader, "FRAGMENT"); // checkýng errors in  GLSL fragment shader
 
 	// create shader program object and get its ID 
 	// A shader program is a holder(container) of vertex and fragment shaders
@@ -93,3 +95,4 @@ void Shader::compileErrors(unsigned int shader, const char* type)
 		}
 	}
 }
+
