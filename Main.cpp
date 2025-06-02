@@ -3,6 +3,7 @@
 #include<GLFW/glfw3.h>
 #include"shaderClass.h"
 #include"Texture.h"
+#include"Camera.h"
 #include"VBO.h"
 #include"VAO.h"
 #include"EBO.h"
@@ -101,21 +102,15 @@ int main()
 	VBO1.Unbind();
 	EBO1.Unbind();
 
-	// Get the uniform location ýd of the scale variable in the shader
-	GLuint uniID = glGetUniformLocation(shaderProgram.ID, "scale");
-
 	// Load the texture from the file and create a texture object
 	Texture trflag("brick.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
 	trflag.texUnit(shaderProgram, "tex0", 0); // Assign the texture unit to the shader uniform
 
-	// Variables that help the rotation of the pyramid
-    float rotation = 0.0f;
-	double prevTime = glfwGetTime();
 
 	// Enables the Depth Buffer so ýt doesnt look like the pyramid is going through itself
 	glEnable(GL_DEPTH_TEST);
 
-
+	Camera camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f)); // Create a camera object
 
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
@@ -126,37 +121,11 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// tell opengl which shader program we want to use
 		shaderProgram.Activate();
-		// Simple timer
-		double crntTime = glfwGetTime();
-		if (crntTime - prevTime >= (1.0 / 60.0)) // If 1/60 seconds have passed, we rotate the pyramid
-		{
-			rotation += 0.5f; // Rotate the pyramid by 0.5 degrees 
-			// both rotatýon and time diffrence affect the speed
-			prevTime = crntTime;
-		}
 
-		glm::mat4 model = glm::mat4(1.0f); // Create a model matrix to transform the object like scaling, rotation, translation etc.
-		glm::mat4 view = glm::mat4(1.0f); // Create a view matrix to position the camera
-		glm::mat4 proj = glm::mat4(1.0f);  //defining how a 3d object is projected onto a 2d screen
+		camera.Inputs(window); // Take care of camera inputs
+		//// Updates and exports the camera matrix to the Vertex Shader
+		camera.Matrix(45.0f, 0.1f, 100.0f, shaderProgram, "camMatrix"); 
 
-		// Rotate the model around the Y - axis
-		model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f)); 
-		//view = glm::rotate(view, glm::radians(-10.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		view = glm::translate(view, glm::vec3(0.0f, -0.5f, -2.0f));
-		proj = glm::perspective(glm::radians(45.0f),(float)(width/height), 0.1f, 100.0f); 
-		// Create a perspective projection matrix with a 45 degree field of view, aspect ratio of width/height, near plane at 0.1 and far plane at 100.0
-
-
-		// Outputs the matrices into the Vertex Shader
-		int modelLoc = glGetUniformLocation(shaderProgram.ID, "model");
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		int viewLoc = glGetUniformLocation(shaderProgram.ID, "view");
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-		int projLoc = glGetUniformLocation(shaderProgram.ID, "proj");
-		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
-
-		// assinging a value to unýform and always before activating the shaderprogram
-		glUniform1f(uniID, 0.5f);
 		// Bind the VAO so that opengl knows which vertex array object to use
 		trflag.Bind(); // Bind the texture so ýt appears ýn render 
 		VAO1.Bind();
