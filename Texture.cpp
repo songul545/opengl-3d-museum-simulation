@@ -24,7 +24,7 @@ Texture::Texture(const char* image, GLenum texType, GLenum slot, GLenum format, 
 	glTexParameteri(texType, GL_TEXTURE_WRAP_T, GL_REPEAT); // repeat the texture vertically
 
 	// Load the texture data into the texture object
-	glTexImage2D(texType, 0, GL_RGBA, widthImg, heightImg, 0, format, pixelType, bytes);
+	glTexImage2D(texType, 0, GL_RGB, widthImg, heightImg, 0, format, pixelType, bytes);
 	// Generate mipmaps for the texture ýt helps with texture filtering when the texture is viewed at different distances
 	glGenerateMipmap(texType);
 
